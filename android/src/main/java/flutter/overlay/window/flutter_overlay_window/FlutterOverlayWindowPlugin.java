@@ -93,19 +93,22 @@ public class FlutterOverlayWindowPlugin implements
             WindowSetup.positionGravity = positionGravity;
             WindowSetup.setNotificationVisibility(notificationVisibility);
 
+
             final Intent intent = new Intent(context, OverlayService.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-            context.startService(intent);
+            OverlayService.enqueueWork(context, intent);
+
             result.success(null);
         } else if (call.method.equals("isOverlayActive")) {
             result.success(OverlayService.isRunning);
             return;
         } else if (call.method.equals("closeOverlay")) {
             if (OverlayService.isRunning) {
-                final Intent i = new Intent(context, OverlayService.class);
-                i.putExtra(OverlayService.INTENT_EXTRA_IS_CLOSE_WINDOW, true);
-                context.startService(i);
+                final Intent intent = new Intent(context, OverlayService.class);
+                intent.putExtra(OverlayService.INTENT_EXTRA_IS_CLOSE_WINDOW, true);
+                OverlayService.enqueueWork(context, intent);
+
                 result.success(true);
             }
             return;
